@@ -35,7 +35,6 @@ app.get("/products", (req, res) => {
 });
 
 //POST request
-
 app.post("/users", (req, res) => {
   const { name, email } = req.body;
 
@@ -45,6 +44,30 @@ app.post("/users", (req, res) => {
       name,
       email,
     },
+  });
+});
+
+//update a user
+app.put("/users/:id", (req, res) => {
+  const { id } = req.params;
+  const { name, email } = req.body;
+
+  res.status(200).json({
+    message: "User updated successfully",
+    user: {
+      id,
+      name,
+      email,
+    },
+  });
+});
+
+//Delete a user
+app.delete("/users/:id", (req, res) => {
+  const { id } = req.params;
+  res.status(200).json({
+    message: "User deleted Successfully",
+    userId: id,
   });
 });
 
