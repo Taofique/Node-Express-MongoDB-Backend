@@ -2,6 +2,12 @@ import express from "express";
 
 const router = express.Router();
 
+// Intentional Route error for checking error handling
+router.get("/error", (req, res, next) => {
+  const error = new Error("Test error");
+  next(error);
+});
+
 router.get("/:id", (req, res) => {
   const { id } = req.params;
 
