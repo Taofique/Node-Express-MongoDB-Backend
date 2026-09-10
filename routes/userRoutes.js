@@ -1,6 +1,22 @@
 import express from "express";
+import User from "../models/User.js";
 
 const router = express.Router();
+
+router.get("/", async (req, res, next) => {
+  try {
+    const users = await User.find().select("-password");
+
+    res.status(200).json({
+      success: true,
+      message: "Users fetched successfully",
+      count: users.length,
+      users,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Intentional Route error for checking error handling
 router.get("/error", (req, res, next) => {
@@ -8,38 +24,46 @@ router.get("/error", (req, res, next) => {
   next(error);
 });
 
-router.get("/:id", (req, res) => {
-  const { id } = req.params;
+// Get single user
+router.get("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-  res.status(200).json({
-    message: "User found",
-    userId: id,
-  });
+    const user = await User.findById(id).select("-password");
+
+    res.status(200).json({
+      message: "User found",
+      userData: user,
+    });
+  } catch (error) {}
 });
 
-router.post("/", (req, res) => {
-  const { name, email } = req.body;
-  res.status(201).json({
-    message: "User created successfully",
-    user: {
+// POST user (Create User)
+router.post("/", async (req, res, next) => {
+  try {
+    const { name, email, password } = req.body;
+
+    const user = await User.create({
       name,
       email,
-    },
-  });
+      password,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.put("/:id", (req, res) => {
-  const { id } = req.params;
-  const { name, email } = req.body;
-
-  res.status(200).json({
-    message: "User updated successfully",
-    user: {
-      id,
-      name,
-      email,
-    },
-  });
+//
+router.put("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+  } catch (error) {}
 });
 
 router.delete("/:id", (req, res) => {
