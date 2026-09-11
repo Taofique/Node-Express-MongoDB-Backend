@@ -3,9 +3,17 @@ import User from "../models/User.js";
 
 const router = express.Router();
 
+// Get all users
 router.get("/", async (req, res, next) => {
   try {
     const users = await User.find().select("-password");
+
+    if (users.length < 1) {
+      res.status(404).json({
+        success: false,
+        message: "Users not found",
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -31,7 +39,15 @@ router.get("/:id", async (req, res, next) => {
 
     const user = await User.findById(id).select("-password");
 
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
     res.status(200).json({
+      success: true,
       message: "User found",
       userData: user,
     });
@@ -59,18 +75,56 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-//
+//PUT users (Update a user by ID)
 router.put("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-  } catch (error) {}
+    const { name, email, password } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        name,
+        email,
+        password,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    ).select("-password");
+
+    if (!updatedUser) {
+      res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      updatedUser,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.delete("/:id", (req, res) => {
+// Delete a user by ID
+router.delete("/:id", async (req, res, next) => {
   const { id } = req.params;
+  if (!id) {
+    res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+  const deletedUser = await User.findByIdAndDelete(id);
   res.status(200).json({
+    success: true,
     message: "User deleted successfully",
-    userId: id,
+    deletedUser,
   });
 });
 
