@@ -1,5 +1,6 @@
 import express from "express";
 import userRoutes from "./routes/userRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import logger from "./middleware/logger.js";
 import errorHandler from "./middleware/errorMiddleware.js";
 
@@ -17,7 +18,10 @@ app.get("/", (req, res) => {
   });
 });
 
+// User routes (public)
 app.use("/api/users", userRoutes);
+// Auth routes
+app.use("/api/auth", authRoutes);
 
 // Error Handling Middleware
 app.use(errorHandler);

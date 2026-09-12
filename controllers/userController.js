@@ -53,7 +53,7 @@ export const createUser = async (req, res, next) => {
       name,
       email,
       password,
-    }).select("-password");
+    });
 
     res.status(201).json({
       success: true,
