@@ -8,9 +8,11 @@ import {
   deleteUserbyID,
 } from "../controllers/userController.js";
 
+import authMiddleware from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-router.get("/", getAllUsers);
+router.get("/", authMiddleware, getAllUsers); // Protected route with authMiddleware
 router.get("/:id", getUserById);
 router.post("/", createUser);
 router.put("/:id", updateUserbyID);
