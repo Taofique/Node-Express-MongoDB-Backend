@@ -6,13 +6,6 @@ export const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Name, email and password required",
-      });
-    }
-
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -49,13 +42,6 @@ export const registerUser = async (req, res, next) => {
 export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password required",
-      });
-    }
 
     const user = await User.findOne({ email });
 
@@ -119,4 +105,12 @@ export const getCurrentUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const getAuthStatus = (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "You are authenticated",
+    userId: req.userId,
+  });
 };
