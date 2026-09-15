@@ -17,9 +17,12 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  res.status(500).json({
+  // Custom Application Error
+  const statusCode = err.statusCode || 500;
+
+  res.status(statusCode).json({
     success: false,
-    message: "Something went wrong",
+    message: err.message || "Something went wrong",
   });
 };
 
