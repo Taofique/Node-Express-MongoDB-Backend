@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import * as authService from "../services/authService.js";
 
@@ -24,45 +23,12 @@ export const registerUser = async (req, res, next) => {
 // Auth Login
 export const loginUser = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordCorrect) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    const token = jwt.sign(
-      {
-        userId: user._id,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      },
-    );
+    const result = await authService.loginUser(req.body);
 
     res.status(200).json({
       success: true,
       message: "Login Successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+      ...result,
     });
   } catch (error) {
     next(error);
@@ -71,14 +37,7 @@ export const loginUser = async (req, res, next) => {
 
 export const getCurrentUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId).select("-password");
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
+    const user = await authService.getCurrentUser(req.userId);
 
     res.status(200).json({
       success: true,
