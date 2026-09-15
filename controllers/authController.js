@@ -1,4 +1,3 @@
-import User from "../models/User.js";
 import * as authService from "../services/authService.js";
 
 export const registerUser = async (req, res, next) => {
@@ -35,6 +34,7 @@ export const loginUser = async (req, res, next) => {
   }
 };
 
+// Get current logged In User
 export const getCurrentUser = async (req, res, next) => {
   try {
     const user = await authService.getCurrentUser(req.userId);
@@ -49,6 +49,7 @@ export const getCurrentUser = async (req, res, next) => {
   }
 };
 
+// Get user Status
 export const getAuthStatus = (req, res) => {
   res.status(200).json({
     success: true,
